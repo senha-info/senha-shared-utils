@@ -1,0 +1,18 @@
+# DEPENDENCIES
+node_modules
+
+# API LOGS
+api_logs
+
+# ENVIRONMENT VARIABLES
+.env
+.env.local
+.env.development
+.env.test
+
+# HTTP FILES
+*.http
+
+# BUILD FILES
+dist
+lib

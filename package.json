@@ -1,0 +1,25 @@
+{
+  "name": "@senhainfo/shared-utils",
+  "version": "1.0.0",
+  "repository": "https://github.com/senha-info/shared-utils.git",
+  "author": "Bruno Gaspar <bruninhoogaspar@gmail.com>",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "axios": "^1.8.1",
+    "date-fns": "^4.1.0"
+  }
+}
