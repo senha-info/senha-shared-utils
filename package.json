@@ -1,7 +1,7 @@
 {
   "name": "@senhainfo/shared-utils",
   "version": "1.0.1",
-  "repository": "https://github.com/senha-info/shared-utils.git",
+  "repository": "https://github.com/senha-info/senha-shared-utils.git",
   "author": "Bruno Gaspar <bruninhoogaspar@gmail.com>",
   "license": "MIT",
   "main": "./lib/index.js",
