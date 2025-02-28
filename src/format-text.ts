@@ -38,7 +38,7 @@ export class FormatText {
       }
 
       // Exclusive for Senha Informática
-      if (word.match(/^(?:pj|ga7|lg|mt|gp|gbl|wl|hkd|nm|amd|crm|gg|rca)$/i)) {
+      if (word.match(/^(?:pj|ga7|lg|mt|gp|gbl|wl|hkd|nm|amd|crm|gg|rca|tti)$/i)) {
         return word.toUpperCase();
       }
 

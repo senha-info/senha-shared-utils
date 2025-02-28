@@ -17,12 +17,12 @@ export class AppException {
   public readonly name: string;
   public readonly message: string;
   public readonly status: HttpStatusCodes;
-  public readonly errors?: any[];
+  public readonly details?: object;
 
-  constructor(name: string, message: string, status = HttpStatusCodes.BAD_REQUEST, errors?: any[]) {
+  constructor(name: string, message: string, status = HttpStatusCodes.BAD_REQUEST, details?: object) {
     this.name = name;
     this.message = message;
     this.status = status;
-    this.errors = errors;
+    this.details = details;
   }
 }
