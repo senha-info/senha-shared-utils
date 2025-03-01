@@ -1,6 +1,12 @@
 type CapitalizeModeType = "words" | "first-letter";
 
 export class FormatText {
+  /**
+   * Normalize a string by replacing special characters with their standard equivalents
+   *
+   * @param {string} [text] - The string to be normalized
+   * @returns {string} The normalized string
+   */
   public normalize(text?: string): string {
     if (!text) {
       return "";
@@ -9,6 +15,13 @@ export class FormatText {
     return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
 
+  /**
+   * Capitalize a string
+   *
+   * @param {string} [text] - The string to be capitalized
+   * @param {CapitalizeModeType} [mode] - The mode to capitalize the string
+   * @returns {string} The capitalized string
+   */
   public capitalize(text?: string, mode: CapitalizeModeType = "words"): string {
     if (!text) {
       return "";
@@ -111,11 +124,31 @@ export class FormatText {
     return capitalizedWords.join(" ").replace("`", "'");
   }
 
-  public removeSpecialCharacters(text?: string): string {
+  /**
+   * Remove non-alphanumeric characters from a string
+   *
+   * @param {string} [text] - The string to remove non-alphanumeric characters
+   * @returns {string} The string without non-alphanumeric characters
+   */
+  public removeNonAlphanumeric(text?: string): string {
     if (!text) {
       return "";
     }
 
     return text.replace(/[^a-zA-Z0-9]/g, "");
+  }
+
+  /**
+   * Remove letters from a string
+   *
+   * @param {string} [text] - The string to remove letters
+   * @returns {string} The string without letters
+   */
+  public removeLetters(text?: string): string {
+    if (!text) {
+      return "";
+    }
+
+    return text.replace(/[a-zA-Z]/g, "");
   }
 }

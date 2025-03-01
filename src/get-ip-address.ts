@@ -2,6 +2,11 @@ import os from "node:os";
 
 const nets = os.networkInterfaces();
 
+/**
+ * Get the IP address of the current machine.
+ *
+ * @returns {{ ipv4: string; ipv6: string }} The IPv4 and IPv6 addresses
+ */
 export function getIPAddress(): { ipv4: string; ipv6: string } {
   let ipv4 = "";
   let ipv6 = "";

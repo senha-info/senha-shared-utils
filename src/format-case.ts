@@ -1,4 +1,10 @@
 export class FormatCase {
+  /**
+   * Convert a string to PascalCase
+   *
+   * @param {string} text - The text to convert
+   * @returns {string} The text in PascalCase
+   */
   public toPascalCase(text?: string): string {
     if (!text) {
       return "";
@@ -10,6 +16,12 @@ export class FormatCase {
       .join("");
   }
 
+  /**
+   * Convert a string to camelCase
+   *
+   * @param {string} text - The text to convert
+   * @returns {string} The text in camelCase
+   */
   public toCamelCase(text?: string): string {
     if (!text) {
       return "";
@@ -19,6 +31,12 @@ export class FormatCase {
     return pascalCase.charAt(0).toLowerCase() + pascalCase.slice(1);
   }
 
+  /**
+   * Convert a string to kebab-case
+   *
+   * @param {string} text - The text to convert
+   * @returns {string} The text in kebab-case
+   */
   public toSnakeCase(text?: string): string {
     if (!text) {
       return "";

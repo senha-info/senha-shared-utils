@@ -24,6 +24,15 @@ export class AppLog {
     }
   }
 
+  /**
+   * Save log file
+   * @param {LogFileProps} props
+   * @param {string} props.file - File name
+   * @param {string} props.message - Log message
+   * @param {string} [props.error] - Error message
+   * @param {string} [props.query] - Query string
+   * @returns {Promise<void>}
+   */
   public save({ file, message, error, query }: LogFileProps): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const date = format(new Date(), "dd/MM/yyyy HH:mm:ss");
