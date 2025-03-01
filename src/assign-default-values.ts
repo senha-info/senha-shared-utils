@@ -1,9 +1,6 @@
 interface AssignDefaultValuesProps<T> {
   entity: T;
-  attributes: Array<{
-    name: keyof T;
-    value: T[keyof T];
-  }>;
+  attributes: Array<{ [K in keyof T]: { name: K; value: T[K] } }[keyof T]>;
 }
 
 /**
@@ -11,7 +8,7 @@ interface AssignDefaultValuesProps<T> {
  *
  * @param {AssignDefaultValuesProps<T>} props
  * @param {T} props.entity - The entity to assign default values
- * @param {Array<{ name: keyof T, value: T[keyof T] }>} props.attributes - The attributes to assign default values
+ * @param {Array<{ [K in keyof T]: { name: K; value: T[K] } }[keyof T]>} props.attributes - The attributes to assign default values
  */
 export function assignDefaultValues<T>({ entity, attributes }: AssignDefaultValuesProps<T>): void {
   for (const { name, value } of attributes) {
