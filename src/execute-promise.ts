@@ -1,4 +1,5 @@
 import { AxiosError } from "axios";
+import { AppException } from "./exceptions";
 
 /**
  * Executes a promise and returns the result, error message and error object.
@@ -21,6 +22,10 @@ async function executePromise<T>(promise: Promise<T>) {
 
     if (error instanceof AxiosError) {
       message = error.response?.data.message || error.message;
+    }
+
+    if (error instanceof AppException) {
+      message = `(${error.status} - ${error.name}) ${error.message}`;
     }
 
     return [null, message, error];
