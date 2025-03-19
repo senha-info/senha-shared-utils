@@ -21,7 +21,10 @@ async function executePromise<T>(promise: Promise<T>) {
     }
 
     if (error instanceof AxiosError) {
-      message = error.response?.data.message || error.message;
+      message = error.message;
+      if (error.response?.data) {
+        message = JSON.stringify(error.response.data);
+      }
     }
 
     if (error instanceof AppException) {
