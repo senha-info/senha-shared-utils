@@ -1,4 +1,5 @@
 export * from "./app-exception";
+export * from "./bad-request";
 export * from "./forbidden";
 export * from "./inactive";
 export * from "./invalid-credentials";
