@@ -2,6 +2,7 @@ export * from "./app-exception";
 export * from "./bad-request-exception";
 export * from "./forbidden-exception";
 export * from "./inactive-exception";
+export * from "./internal-server-exception";
 export * from "./invalid-credentials-exception";
 export * from "./invalid-token-exception";
 export * from "./missing-token-exception";
