@@ -16,7 +16,7 @@ export enum AppExceptionEnum {
 
 export interface AppExceptionProps {
   name?: AppExceptionEnum;
-  message: string;
+  message?: string;
   details?: object;
 }
 
