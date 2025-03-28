@@ -9,7 +9,14 @@ export class UnauthorizedException extends AppException {
    * @param message - Mensagem de erro @default "Sem autorização"
    * @param details - Detalhes do erro
    */
-  constructor({ name = AppExceptionEnum.UNAUTHORIZED, message = "Sem autorização", details }: AppExceptionProps) {
-    super(name, message, HttpStatusCodes.UNAUTHORIZED, details);
+  constructor(props?: AppExceptionProps) {
+    if (!props) {
+      props = {
+        name: AppExceptionEnum.UNAUTHORIZED,
+        message: "Sem autorização",
+      };
+    }
+
+    super(props.name, props.message, HttpStatusCodes.UNAUTHORIZED, props.details);
   }
 }

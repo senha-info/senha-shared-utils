@@ -8,10 +8,16 @@ export class InvalidCredentialsException extends UnauthorizedException {
    * @param message - Mensagem de erro @default "Usuário ou senha incorretos"
    * @param details - Detalhes do erro
    */
-  constructor({ message = "Usuário ou senha incorretos", details }: AppExceptionConstructorProps) {
+  constructor(props?: AppExceptionConstructorProps) {
+    if (!props) {
+      props = {
+        message: "Usuário ou senha incorretos",
+      };
+    }
+
     super({
-      message,
-      details,
+      message: props.message,
+      details: props.details,
     });
   }
 }
