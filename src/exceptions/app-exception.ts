@@ -38,7 +38,7 @@ export class AppException {
    */
   constructor(
     name = AppExceptionEnum.BAD_REQUEST,
-    message: string,
+    message = "Erro ao processar requisição",
     status = HttpStatusCodes.BAD_REQUEST,
     details?: object
   ) {
