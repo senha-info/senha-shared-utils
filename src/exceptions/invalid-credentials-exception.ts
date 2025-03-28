@@ -1,7 +1,17 @@
+import { AppExceptionConstructorProps } from "./app-exception";
 import { UnauthorizedException } from "./unauthorized-exception";
 
 export class InvalidCredentialsException extends UnauthorizedException {
-  constructor(message = "Usuário ou senha incorretos", details?: object) {
-    super(message, details);
+  /**
+   * Construtor do erro "InvalidCredentialsException"
+   *
+   * @param message - Mensagem de erro @default "Usuário ou senha incorretos"
+   * @param details - Detalhes do erro
+   */
+  constructor({ message = "Usuário ou senha incorretos", details }: AppExceptionConstructorProps) {
+    super({
+      message,
+      details,
+    });
   }
 }

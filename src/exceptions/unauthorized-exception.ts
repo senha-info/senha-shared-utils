@@ -1,8 +1,15 @@
 import { HttpStatusCodes } from "../http-status-enum";
-import { AppException, AppExceptionEnum } from "./app-exception";
+import { AppException, AppExceptionEnum, AppExceptionProps } from "./app-exception";
 
 export class UnauthorizedException extends AppException {
-  constructor(message = "Sem autorização", details?: object) {
-    super(AppExceptionEnum.UNAUTHORIZED, message, HttpStatusCodes.UNAUTHORIZED, details);
+  /**
+   * Construtor do erro "UnauthorizedException"
+   *
+   * @param name - Nome do erro @default AppExceptionEnum.UNAUTHORIZED
+   * @param message - Mensagem de erro @default "Sem autorização"
+   * @param details - Detalhes do erro
+   */
+  constructor({ name = AppExceptionEnum.UNAUTHORIZED, message = "Sem autorização", details }: AppExceptionProps) {
+    super(name, message, HttpStatusCodes.UNAUTHORIZED, details);
   }
 }

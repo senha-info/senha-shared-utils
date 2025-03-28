@@ -1,9 +1,19 @@
 import { HttpStatusCodes } from "../http-status-enum";
-
-import { AppException, AppExceptionEnum } from "./app-exception";
+import { AppException, AppExceptionEnum, AppExceptionProps } from "./app-exception";
 
 export class ForbiddenException extends AppException {
-  constructor(message = "Sem permissão para acessar este recurso", details?: object) {
-    super(AppExceptionEnum.FORBIDDEN, message, HttpStatusCodes.FORBIDDEN, details);
+  /**
+   * Construtor do erro "ForbiddenException"
+   *
+   * @param name - Nome do erro @default AppExceptionEnum.FORBIDDEN
+   * @param message - Mensagem de erro @default "Sem permissão para acessar este recurso"
+   * @param details - Detalhes do erro
+   */
+  constructor({
+    name = AppExceptionEnum.FORBIDDEN,
+    message = "Sem permissão para acessar este recurso",
+    details,
+  }: AppExceptionProps) {
+    super(name, message, HttpStatusCodes.FORBIDDEN, details);
   }
 }

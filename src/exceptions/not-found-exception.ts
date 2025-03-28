@@ -1,8 +1,15 @@
 import { HttpStatusCodes } from "../http-status-enum";
-import { AppException, AppExceptionEnum } from "./app-exception";
+import { AppException, AppExceptionEnum, AppExceptionProps } from "./app-exception";
 
 export class NotFoundException extends AppException {
-  constructor(message = "Não encontrado", details?: object) {
-    super(AppExceptionEnum.NOT_FOUND, message, HttpStatusCodes.NOT_FOUND, details);
+  /**
+   * Construtor do erro "NotFoundException"
+   *
+   * @param name - Nome do erro @default AppExceptionEnum.NOT_FOUND
+   * @param message - Mensagem de erro @default "Não encontrado"
+   * @param details - Detalhes do erro
+   */
+  constructor({ name = AppExceptionEnum.NOT_FOUND, message = "Não encontrado", details }: AppExceptionProps) {
+    super(name, message, HttpStatusCodes.NOT_FOUND, details);
   }
 }

@@ -11,7 +11,16 @@ export enum AppExceptionEnum {
   FORBIDDEN = "SI_FORBIDDEN",
   INVALID_REQUEST_BODY = "SI_INVALID_REQUEST_BODY",
   INACTIVE = "SI_INACTIVE",
+  UNAVAILABLE_STOCK = "SI_UNAVAILABLE_STOCK",
 }
+
+export interface AppExceptionProps {
+  name?: AppExceptionEnum;
+  message: string;
+  details?: object;
+}
+
+export type AppExceptionConstructorProps = Omit<AppExceptionProps, "name">;
 
 export class AppException {
   public readonly name: string;
@@ -19,7 +28,20 @@ export class AppException {
   public readonly status: HttpStatusCodes;
   public readonly details?: object;
 
-  constructor(name: string, message: string, status = HttpStatusCodes.BAD_REQUEST, details?: object) {
+  /**
+   * Construtor do erro "AppException"
+   *
+   * @param name - Nome do erro @default AppExceptionEnum.BAD_REQUEST
+   * @param message - Mensagem de erro
+   * @param status - Código de status HTTP @default HttpStatusCodes.BAD_REQUEST
+   * @param details - Detalhes do erro
+   */
+  constructor(
+    name = AppExceptionEnum.BAD_REQUEST,
+    message: string,
+    status = HttpStatusCodes.BAD_REQUEST,
+    details?: object
+  ) {
     this.name = name;
     this.message = message;
     this.status = status;
