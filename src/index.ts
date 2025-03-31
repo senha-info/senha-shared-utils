@@ -7,6 +7,7 @@ export * from "./generate-metadata-response";
 export * from "./get-ip-address";
 export * from "./http-status-enum";
 export * from "./parse-request-url";
+export * from "./split-array";
 export * from "./xor-encrypt";
 
 export * as Exceptions from "./exceptions";
