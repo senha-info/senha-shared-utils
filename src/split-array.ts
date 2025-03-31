@@ -1,14 +1,9 @@
 interface SplitArrayProps<T> {
   baseArray: T[];
-  limit: number;
-  skipSplit: boolean;
+  limit?: number;
 }
 
-export function splitArray<T>({ baseArray, limit, skipSplit }: SplitArrayProps<T>): T[][] {
-  if (skipSplit) {
-    return [baseArray];
-  }
-
+export function splitArray<T>({ baseArray, limit = baseArray.length }: SplitArrayProps<T>): T[][] {
   let result: T[][] = [];
 
   for (let i = 0; i < baseArray.length; i++) {
