@@ -11,6 +11,7 @@ export class BadRequestException extends AppException {
    */
   constructor(props?: AppExceptionProps) {
     props = {
+      ...props,
       name: props?.name ?? AppExceptionEnum.BAD_REQUEST,
       message: props?.message ?? "Erro ao processar requisição",
     };

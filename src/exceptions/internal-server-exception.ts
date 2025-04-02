@@ -11,6 +11,7 @@ export class InternalServerException extends AppException {
    */
   constructor(props?: AppExceptionProps) {
     props = {
+      ...props,
       name: props?.name ?? AppExceptionEnum.INTERNAL_SERVER_ERROR,
       message: props?.message ?? "Erro ao processar requisição",
     };

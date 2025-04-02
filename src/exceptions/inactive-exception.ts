@@ -11,6 +11,7 @@ export class InactiveException extends ForbiddenException {
    */
   constructor(props?: AppExceptionConstructorProps) {
     props = {
+      ...props,
       message: props?.message ?? "Inativo",
     };
 
