@@ -10,12 +10,10 @@ export class NotFoundException extends AppException {
    * @param details - Detalhes do erro
    */
   constructor(props?: AppExceptionProps) {
-    if (!props) {
-      props = {
-        name: AppExceptionEnum.NOT_FOUND,
-        message: "Não encontrado",
-      };
-    }
+    props = {
+      name: props?.name ?? AppExceptionEnum.NOT_FOUND,
+      message: props?.message ?? "Não encontrado",
+    };
 
     super(props.name, props.message, HttpStatusCodes.NOT_FOUND, props.details);
   }

@@ -10,12 +10,10 @@ export class ForbiddenException extends AppException {
    * @param details - Detalhes do erro
    */
   constructor(props?: AppExceptionProps) {
-    if (!props) {
-      props = {
-        name: AppExceptionEnum.FORBIDDEN,
-        message: "Sem permissão para acessar este recurso",
-      };
-    }
+    props = {
+      name: props?.name ?? AppExceptionEnum.FORBIDDEN,
+      message: props?.message ?? "Sem permissão para acessar este recurso",
+    };
 
     super(props.name, props.message, HttpStatusCodes.FORBIDDEN, props.details);
   }

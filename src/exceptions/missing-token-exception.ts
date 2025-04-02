@@ -9,11 +9,9 @@ export class MissingTokenException extends UnauthorizedException {
    * @param details - Detalhes do erro
    */
   constructor(props?: AppExceptionConstructorProps) {
-    if (!props) {
-      props = {
-        message: "Token de acesso não informado",
-      };
-    }
+    props = {
+      message: props?.message ?? "Token de acesso não informado",
+    };
 
     super({
       name: AppExceptionEnum.MISSING_TOKEN,

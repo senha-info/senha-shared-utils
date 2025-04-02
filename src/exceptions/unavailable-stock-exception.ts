@@ -9,11 +9,9 @@ export class UnavailableStockException extends BadRequestException {
    * @param details - Detalhes do erro
    */
   constructor(props?: AppExceptionConstructorProps) {
-    if (!props) {
-      props = {
-        message: "Estoque indisponível",
-      };
-    }
+    props = {
+      message: props?.message ?? "Estoque indisponível",
+    };
 
     super({
       name: AppExceptionEnum.UNAVAILABLE_STOCK,

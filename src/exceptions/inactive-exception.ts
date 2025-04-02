@@ -10,11 +10,9 @@ export class InactiveException extends ForbiddenException {
    * @param details - Detalhes do erro
    */
   constructor(props?: AppExceptionConstructorProps) {
-    if (!props) {
-      props = {
-        message: "Inativo",
-      };
-    }
+    props = {
+      message: props?.message ?? "Inativo",
+    };
 
     super({
       name: AppExceptionEnum.INACTIVE,

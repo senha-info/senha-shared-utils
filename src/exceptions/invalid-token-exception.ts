@@ -9,11 +9,9 @@ export class InvalidTokenException extends UnauthorizedException {
    * @param details - Detalhes do erro
    */
   constructor(props?: AppExceptionConstructorProps) {
-    if (!props) {
-      props = {
-        message: "Token de acesso inválido, tente novamente!",
-      };
-    }
+    props = {
+      message: props?.message ?? "Token de acesso inválido, tente novamente!",
+    };
 
     super({
       name: AppExceptionEnum.INVALID_TOKEN,
