@@ -1,74 +1,45 @@
-import { Service, ServiceConfig, User } from "node-windows";
+import { Service, ServiceConfig } from "node-windows";
 import path from "node:path";
 
-type WindowsServiceOptions = Partial<ServiceConfig> & {
-  logOnAs?: User;
-};
-
 export class WindowsService {
-  private options: WindowsServiceOptions;
-
-  private service: Service = new Service({
+  private options: ServiceConfig = {
     name: "Senha API - Service",
     description: "Senha API - Service",
     script: path.join("dist", "server.js"),
-  });
+  };
+
+  public service: Service = new Service(this.options);
 
   /**
    * Constructor
-   * @param {WindowsServiceOptions} options - Options for the Windows service
+   * @param {ServiceConfig} config - Configuration for the Windows service
    *
    * @default { name: "Senha API - Service", script: "dist/server.js" }
    *
    * @example
    * const service = new WindowsService({ name: "My Service", script: "path/to/service" });
    */
-  constructor(options?: WindowsServiceOptions) {
-    if (options?.logOnAs) {
-      this.service.logOnAs = options.logOnAs;
-      delete options.logOnAs;
-    }
-
-    if (options) {
-      Object.assign(this.options, options);
+  constructor(config?: ServiceConfig) {
+    if (config) {
+      Object.assign(this.options, config);
     }
 
     this.service
       .on("install", () => {
         this.service.start();
-        console.log(`\nService "${this.options.name}" installed\n`);
+        console.log(`Service "${this.options.name}" installed`);
       })
       .on("alreadyinstalled", () => {
-        console.log(`\nService "${this.options.name}" is already installed\n`);
+        console.log(`Service "${this.options.name}" is already installed`);
       })
       .on("uninstall", () => {
-        console.log(`\nService "${this.options.name}" uninstalled\n`);
+        console.log(`Service "${this.options.name}" uninstalled`);
       })
       .on("start", () => {
-        console.log(`\nService started\n`);
+        console.log("Service started");
       })
       .on("stop", () => {
-        console.log(`\nService stopped\n`);
+        console.log("Service stopped");
       });
-  }
-
-  public install() {
-    this.service.install();
-  }
-
-  public uninstall() {
-    this.service.uninstall();
-  }
-
-  public start() {
-    this.service.start();
-  }
-
-  public stop() {
-    this.service.stop();
-  }
-
-  public restart() {
-    this.service.restart();
   }
 }
