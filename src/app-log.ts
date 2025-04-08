@@ -18,6 +18,16 @@ export class AppLog {
     logPath: path.resolve("api_logs"),
   };
 
+  /**
+   * Constructor
+   * @param {AppLogOptions} options - Options for the log file
+   * @param {string} options.logPath - Path to save the log file
+   *
+   * @default { logPath: path.resolve("api_logs") }
+   *
+   * @example
+   * const appLog = new AppLog({ logPath: "path/to/logs" });
+   */
   constructor(options?: AppLogOptions) {
     if (options) {
       Object.assign(this.options, options);
