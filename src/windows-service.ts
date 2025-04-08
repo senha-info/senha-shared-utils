@@ -1,7 +1,7 @@
 import { Service, ServiceConfig, User } from "node-windows";
 import path from "node:path";
 
-type WindowsServiceOptions = ServiceConfig & {
+type WindowsServiceOptions = Partial<ServiceConfig> & {
   logOnAs?: User;
 };
 
