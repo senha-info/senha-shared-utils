@@ -7,7 +7,7 @@ interface WindowsServiceOptions extends Partial<ServiceConfig> {
 }
 
 export class WindowsService {
-  private options: ServiceConfig;
+  private options: Partial<ServiceConfig> = {};
   public service: Service;
 
   /**
@@ -21,7 +21,11 @@ export class WindowsService {
    */
   constructor(options: WindowsServiceOptions) {
     Object.assign(this.options, options);
+    this.service = new Service(this.options as ServiceConfig);
+    this.initialize();
+  }
 
+  private initialize() {
     this.service
       .on("install", () => {
         this.service.start();
