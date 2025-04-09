@@ -1,28 +1,26 @@
 import { Service, ServiceConfig } from "node-windows";
-import path from "node:path";
+
+interface WindowsServiceOptions extends Partial<ServiceConfig> {
+  name: string;
+  description: string;
+  script: string;
+}
 
 export class WindowsService {
-  private options: ServiceConfig = {
-    name: "Senha API - Service",
-    description: "Senha API - Service",
-    script: path.join("dist", "server.js"),
-  };
-
-  public service: Service = new Service(this.options);
+  private options: ServiceConfig;
+  public service: Service;
 
   /**
    * Constructor
-   * @param {ServiceConfig} config - Configuration for the Windows service
+   * @param {WindowsServiceOptions} options - Options for the Windows service
    *
    * @default { name: "Senha API - Service", script: "dist/server.js" }
    *
    * @example
    * const service = new WindowsService({ name: "My Service", script: "path/to/service" });
    */
-  constructor(config?: ServiceConfig) {
-    if (config) {
-      Object.assign(this.options, config);
-    }
+  constructor(options: WindowsServiceOptions) {
+    Object.assign(this.options, options);
 
     this.service
       .on("install", () => {
