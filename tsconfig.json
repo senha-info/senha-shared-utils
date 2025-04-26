@@ -1,13 +1,6 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "_version": "22.0.0",
-
+  "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
-    "lib": ["ES6"],
-    "module": "CommonJS",
-    "target": "ES6",
-    "strict": true,
-    "esModuleInterop": true,
     "outDir": "./lib",
     "declaration": true,
     "declarationMap": true,
