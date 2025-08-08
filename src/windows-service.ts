@@ -4,6 +4,10 @@ interface WindowsServiceOptions extends Partial<ServiceConfig> {
   name: string;
   description: string;
   script: string;
+  logOnAs?: {
+    account: string;
+    password: string;
+  };
 }
 
 export class WindowsService {
@@ -22,6 +26,12 @@ export class WindowsService {
   constructor(options: WindowsServiceOptions) {
     this.options = options;
     this.service = new Service(options);
+
+    if (options.logOnAs) {
+      this.service.logOnAs.account = options.logOnAs.account;
+      this.service.logOnAs.password = options.logOnAs.password;
+    }
+
     this.initialize();
   }
 
