@@ -16,11 +16,11 @@ function generateRandomNumber(min = 0, max = 100): number {
 export function getRandomData(type: "string", config?: { length?: number }): string;
 export function getRandomData(type: "number", config?: { min?: number; max?: number }): number;
 export function getRandomData(type: "boolean"): boolean;
-export function getRandomData(type: "random", config?: { options?: string[] | number[] | boolean[] }): string;
+export function getRandomData<T>(type: "random", config?: { options?: T[] }): T;
 
 export function getRandomData<T extends string | number | boolean>(
   type: "string" | "number" | "boolean" | "random",
-  config?: { length?: number; min?: number; max?: number; options?: string[] | number[] | boolean[] }
+  config?: { length?: number; min?: number; max?: number; options?: T[] }
 ): T {
   switch (type) {
     case "string": {
