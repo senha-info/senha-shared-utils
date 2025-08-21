@@ -5,6 +5,7 @@ export * from "./format-case";
 export * from "./format-text";
 export * from "./generate-metadata-response";
 export * from "./get-ip-address";
+export * from "./get-random-data";
 export * from "./http-status-enum";
 export * from "./parse-request-url";
 export * from "./process-form-data";
