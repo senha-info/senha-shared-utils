@@ -51,7 +51,7 @@ export class FormatText {
       }
 
       // Exclusive for Senha Informática
-      if (word.match(/^(?:pj|ga7|lg|mt|gp|gbl|wl|hkd|nm|amd|crm|gg|rca|tti|mg|sc)$/i)) {
+      if (word.match(/^(?:pj|ga7|lg|mt|gp|gbl|wl|hkd|nm|amd|crm|gg|rca|tti|mg|sc|gl)$/i)) {
         return word.toUpperCase();
       }
 
@@ -116,6 +116,11 @@ export class FormatText {
           second.charAt(0).toUpperCase() +
           second.slice(1).toLowerCase()
         );
+      }
+
+      // Matches patterns like "1L" or "500ML" (units)
+      if (word.match(/^\d+(?:ML|L|G|KG|MG|CL|DL|MLT|LT)$/i)) {
+        return word.toUpperCase();
       }
 
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();

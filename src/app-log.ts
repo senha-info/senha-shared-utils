@@ -3,27 +3,40 @@ import fs from "node:fs";
 import path from "node:path";
 
 interface AppLogOptions {
-  logPath: string;
+  /**
+   * Path to save the log file
+   * @default "./api_logs"
+   */
+  logPath?: string;
 }
 
 interface LogFileProps {
+  /**
+   * File name
+   */
   file: string;
+  /**
+   * Log message
+   */
   message: string;
+  /**
+   * Error message
+   */
   error?: string;
+  /**
+   * Query string
+   */
   query?: string;
 }
 
 export class AppLog {
-  private options: AppLogOptions = {
+  private options: Required<AppLogOptions> = {
     logPath: path.resolve("api_logs"),
   };
 
   /**
    * Constructor
    * @param {AppLogOptions} options - Options for the log file
-   * @param {string} options.logPath - Path to save the log file
-   *
-   * @default { logPath: path.resolve("api_logs") }
    *
    * @example
    * const appLog = new AppLog({ logPath: "path/to/logs" });
@@ -36,11 +49,6 @@ export class AppLog {
 
   /**
    * Save log file
-   * @param {LogFileProps} props
-   * @param {string} props.file - File name
-   * @param {string} props.message - Log message
-   * @param {string} [props.error] - Error message
-   * @param {string} [props.query] - Query string
    * @returns {Promise<void>}
    */
   public save({ file, message, error, query }: LogFileProps): Promise<void> {
