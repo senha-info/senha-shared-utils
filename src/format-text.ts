@@ -12,7 +12,10 @@ export class FormatText {
       return "";
     }
 
-    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return text
+      .replace(/[\u2028\u2029\u200B\u00A0\u202F]/g, "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
   }
 
   /**
