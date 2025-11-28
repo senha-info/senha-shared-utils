@@ -305,6 +305,11 @@ combined-stream@^1.0.8:
   dependencies:
     delayed-stream "~1.0.0"
 
+confusables@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/confusables/-/confusables-1.1.1.tgz#d3aafa1666d13a3a2fa9483bf556f641588d9a02"
+  integrity sha512-BzFtzUrufackm00Wb2zvrZV0ItRqPdWaUprU5FXHeZiJRrOWxGmXmQl/muGTF9EQl+MdBXz+Irk99meskGZmXw==
+
 cookie@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-1.0.2.tgz#27360701532116bd3f1f9416929d176afe1e4610"

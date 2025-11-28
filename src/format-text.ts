@@ -1,3 +1,5 @@
+import { remove as removeConfusables } from "confusables";
+
 type CapitalizeModeType = "words" | "first-letter";
 
 type NormalizeOptions = {
@@ -40,7 +42,7 @@ export class FormatText {
       text = text.trim(); // Trim
     }
 
-    return text;
+    return removeConfusables(text);
   }
 
   /**
