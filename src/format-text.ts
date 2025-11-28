@@ -1,21 +1,46 @@
 type CapitalizeModeType = "words" | "first-letter";
 
+type NormalizeOptions = {
+  /**
+   * Removes diacritics from the text.
+   * Set this to `false` to preserve diacritics.
+   * @default true
+   */
+  removeDiacritics?: boolean;
+
+  /**
+   * Trims whitespace from the beginning and end of the text.
+   * Set this to `false` to disable trimming.
+   * @default true
+   */
+  trim?: boolean;
+};
+
 export class FormatText {
   /**
    * Normalize a string by replacing special characters with their standard equivalents
    *
    * @param {string} [text] - The string to be normalized
+   * @param {NormalizeOptions} [options] - Normalize text options
+   *
    * @returns {string} The normalized string
    */
-  public normalize(text?: string): string {
+  public normalize(text?: string, { removeDiacritics = true, trim = true }: NormalizeOptions = {}): string {
     if (!text) {
       return "";
     }
 
-    return text
-      .replace(/[\u2028\u2029\u200B\u00A0\u202F]/g, "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+    text = text.normalize("NFD").replace(/[\u00A0\u202F\u200B-\u200F\u2028\u2029\u2066-\u2069]/g, ""); // Invisibles
+
+    if (removeDiacritics) {
+      text = text.replace(/[\u0300-\u036f]/g, ""); // Diacritics
+    }
+
+    if (trim) {
+      text = text.trim(); // Trim
+    }
+
+    return text;
   }
 
   /**
