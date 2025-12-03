@@ -11,6 +11,13 @@ type NormalizeOptions = {
   removeDiacritics?: boolean;
 
   /**
+   * Removes emojis from the text.
+   * Set this to `false` to preserve emojis.
+   * @default true
+   */
+  removeEmojis?: boolean;
+
+  /**
    * Trims whitespace from the beginning and end of the text.
    * Set this to `false` to disable trimming.
    * @default true
@@ -27,7 +34,10 @@ export class FormatText {
    *
    * @returns {string} The normalized string
    */
-  public normalize(text?: string, { removeDiacritics = true, trim = true }: NormalizeOptions = {}): string {
+  public normalize(
+    text?: string,
+    { removeDiacritics = true, removeEmojis = true, trim = true }: NormalizeOptions = {}
+  ): string {
     if (!text) {
       return "";
     }
@@ -36,6 +46,10 @@ export class FormatText {
 
     if (removeDiacritics) {
       text = text.replace(/[\u0300-\u036f]/g, ""); // Diacritics
+    }
+
+    if (removeEmojis) {
+      text = text.replace(/[\p{Emoji}\p{Extended_Pictographic}]/gu, ""); // Emojis
     }
 
     if (trim) {
