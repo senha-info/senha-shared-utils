@@ -200,4 +200,58 @@ export class FormatText {
 
     return text.replace(/[a-zA-Z]/g, "");
   }
+
+  /**
+   * Parse RTF string to plain text
+   *
+   * @param {string} [rtf] - The RTF to parse
+   * @returns {string} The string in plain text
+   */
+  public rtfToPlainText(rtf?: string): string {
+    if (!rtf) {
+      return "";
+    }
+
+    let text = rtf;
+
+    // Remove blocos RTF com chaves aninhadas (como fonttbl)
+    // Essa regex captura blocos que podem ter múltiplos níveis de chaves
+    while (text.match(/\{\\fonttbl[^{}]*(\{[^{}]*\}[^{}]*)*\}/g)) {
+      text = text.replace(/\{\\fonttbl[^{}]*(\{[^{}]*\}[^{}]*)*\}/g, "");
+    }
+
+    // Remove outros blocos de cabeçalho
+    text = text.replace(/\{\\colortbl[^}]*\}/g, "");
+    text = text.replace(/\{\\stylesheet[^}]*\}/g, "");
+    text = text.replace(/\{\\info[^}]*\}/g, "");
+    text = text.replace(/\{\\(\*)?\\[a-z]+[^}]*\}/g, "");
+
+    // Decodifica caracteres especiais
+    text = text.replace(/\\'([0-9a-fA-F]{2})/g, (match, hex) => {
+      return String.fromCharCode(parseInt(hex, 16));
+    });
+
+    // Remove comandos RTF
+    text = text.replace(/\\[a-z]{1,32}(-?\d{1,10})?[ ]?/gi, " ");
+
+    // Remove chaves, barras e ponto e vírgula soltos
+    text = text.replace(/[\{\}\\]/g, "");
+    text = text.replace(/^[;\s]+/gm, ""); // Remove ; no início de linhas
+
+    // Limpa quebras e espaços
+    text = text.replace(/[\r\n]+/g, " ");
+    text = text.replace(/\s+/g, " ");
+    text = text.trim();
+
+    // Remove possíveis resíduos de nomes de fontes comuns
+    text = text.replace(/^(Arial|Times New Roman|Courier New|MS Sans Serif|Calibri)[;\s]*/i, "");
+
+    // Remove espaço + ponto solto no final
+    text = text.replace(/\s*\.\s*$/g, ".");
+
+    // Remove pontos duplicados e pontos soltos no final
+    text = text.replace(/\.+$/g, ".");
+
+    return text;
+  }
 }
