@@ -13,9 +13,9 @@
     "lib"
   ],
   "bin": {
-    "commit:patch": "npm version patch --no-git-tag-version",
-    "commit:minor": "npm version minor --no-git-tag-version",
-    "commit:major": "npm version major --no-git-tag-version"
+    "commit:patch": "./scripts/commit-patch.js",
+    "commit:minor": "./scripts/commit-minor.js",
+    "commit:major": "./scripts/commit-major.js"
   },
   "scripts": {
     "types:check": "tsc --noEmit",
