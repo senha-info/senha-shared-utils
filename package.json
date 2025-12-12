@@ -12,6 +12,11 @@
   "files": [
     "lib"
   ],
+  "bin": {
+    "commit:patch": "npm version patch --no-git-tag-version",
+    "commit:minor": "npm version minor --no-git-tag-version",
+    "commit:major": "npm version major --no-git-tag-version"
+  },
   "scripts": {
     "types:check": "tsc --noEmit",
     "clean": "rmdir /s /q lib",
