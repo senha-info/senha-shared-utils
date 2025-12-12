@@ -13,9 +13,7 @@
     "lib"
   ],
   "bin": {
-    "commit:patch": "./scripts/commit-patch.js",
-    "commit:minor": "./scripts/commit-minor.js",
-    "commit:major": "./scripts/commit-major.js"
+    "commit": "./scripts/commit.js"
   },
   "scripts": {
     "types:check": "tsc --noEmit",
