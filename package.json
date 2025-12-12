@@ -13,7 +13,7 @@
     "lib"
   ],
   "bin": {
-    "commit": "./scripts/commit.js"
+    "senhainfo": "./scripts/cli.js"
   },
   "scripts": {
     "types:check": "tsc --noEmit",
