@@ -12,10 +12,6 @@
   "files": [
     "lib"
   ],
-  "bin": {
-    "senhainfo": "./scripts/cli.js",
-    "commit": "./scripts/commit.js"
-  },
   "scripts": {
     "types:check": "tsc --noEmit",
     "clean": "rmdir /s /q lib",

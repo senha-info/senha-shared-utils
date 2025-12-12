@@ -7,6 +7,6 @@
     "sourceMap": true,
     "strictPropertyInitialization": false
   },
-  "include": ["src", "scripts"],
+  "include": ["src"],
   "exclude": ["node_modules", "lib"]
 }
