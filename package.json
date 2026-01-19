@@ -1,6 +1,6 @@
 {
   "name": "@senhainfo/shared-utils",
-  "version": "1.5.14",
+  "version": "1.5.15",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/senha-info/senha-shared-utils.git"
