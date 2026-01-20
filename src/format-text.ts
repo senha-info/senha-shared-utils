@@ -36,7 +36,7 @@ export class FormatText {
    */
   public normalize(
     text?: string,
-    { removeDiacritics = true, removeEmojis = true, trim = true }: NormalizeOptions = {}
+    { removeDiacritics = true, removeEmojis = true, trim = true }: NormalizeOptions = {},
   ): string {
     if (!text) {
       return "";
@@ -215,7 +215,6 @@ export class FormatText {
     let text = rtf;
 
     // Remove blocos RTF com chaves aninhadas (como fonttbl)
-    // Essa regex captura blocos que podem ter múltiplos níveis de chaves
     while (text.match(/\{\\fonttbl[^{}]*(\{[^{}]*\}[^{}]*)*\}/g)) {
       text = text.replace(/\{\\fonttbl[^{}]*(\{[^{}]*\}[^{}]*)*\}/g, "");
     }
@@ -231,6 +230,9 @@ export class FormatText {
       return String.fromCharCode(parseInt(hex, 16));
     });
 
+    // Converte \par em quebra de linha ANTES de remover outros comandos
+    text = text.replace(/\\par\b/g, "\n");
+
     // Remove comandos RTF
     text = text.replace(/\\[a-z]{1,32}(-?\d{1,10})?[ ]?/gi, " ");
 
@@ -238,9 +240,10 @@ export class FormatText {
     text = text.replace(/[\{\}\\]/g, "");
     text = text.replace(/^[;\s]+/gm, ""); // Remove ; no início de linhas
 
-    // Limpa quebras e espaços
-    text = text.replace(/[\r\n]+/g, " ");
-    text = text.replace(/\s+/g, " ");
+    // Limpa quebras e espaços DUPLICADOS (mas mantém quebras únicas)
+    text = text.replace(/[\r\n]{2,}/g, "\n"); // Múltiplas quebras viram uma
+    text = text.replace(/ +/g, " "); // Múltiplos espaços viram um
+
     text = text.trim();
 
     // Remove possíveis resíduos de nomes de fontes comuns
