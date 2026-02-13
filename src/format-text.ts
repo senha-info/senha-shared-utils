@@ -23,6 +23,11 @@ type NormalizeOptions = {
    * @default true
    */
   trim?: boolean;
+
+  /**
+   * Set the length of the text to which it should be normalized.
+   */
+  maxLength?: number;
 };
 
 export class FormatText {
@@ -36,7 +41,7 @@ export class FormatText {
    */
   public normalize(
     text?: string,
-    { removeDiacritics = true, removeEmojis = true, trim = true }: NormalizeOptions = {},
+    { removeDiacritics = true, removeEmojis = true, trim = true, maxLength }: NormalizeOptions = {},
   ): string {
     if (!text) {
       return "";
@@ -54,6 +59,10 @@ export class FormatText {
 
     if (trim) {
       text = text.trim(); // Trim
+    }
+
+    if (maxLength !== undefined && text.length > maxLength) {
+      text = text.substring(0, maxLength);
     }
 
     return removeConfusables(text);
