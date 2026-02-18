@@ -1,4 +1,11 @@
 export function parseRequestURL(page: number, maxPage: number, url: string) {
+  if (!maxPage) {
+    return {
+      previousURL: null,
+      nextURL: null,
+    };
+  }
+
   if (page > maxPage) {
     return {
       previousURL: url.replace(`page=${page}`, `page=${maxPage}`),
@@ -6,8 +13,8 @@ export function parseRequestURL(page: number, maxPage: number, url: string) {
     };
   }
 
-  const separator = url.includes("?") ? "&" : "?";
-  const hasPage = url.includes("page");
+  const separator = url.includes('?') ? '&' : '?';
+  const hasPage = url.includes('page');
   const previousURL =
     page > 1
       ? hasPage
