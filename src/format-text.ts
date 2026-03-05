@@ -1,6 +1,6 @@
-import { remove as removeConfusables } from "confusables";
+import { remove as removeConfusables } from 'confusables';
 
-type CapitalizeModeType = "words" | "first-letter";
+type CapitalizeModeType = 'words' | 'first-letter';
 
 type NormalizeOptions = {
   /**
@@ -44,17 +44,17 @@ export class FormatText {
     { removeDiacritics = true, removeEmojis = true, trim = true, maxLength }: NormalizeOptions = {},
   ): string {
     if (!text) {
-      return "";
+      return '';
     }
 
-    text = text.normalize("NFD").replace(/[\u00A0\u202F\u200B-\u200F\u2028\u2029\u2066-\u2069]/g, ""); // Invisibles
+    text = text.normalize('NFD').replace(/[\u00A0\u202F\u200B-\u200F\u2028\u2029\u2066-\u2069]/g, ''); // Invisibles
 
     if (removeDiacritics) {
-      text = text.replace(/[\u0300-\u036f]/g, ""); // Diacritics
+      text = text.replace(/[\u0300-\u036f]/g, ''); // Diacritics
     }
 
     if (removeEmojis) {
-      text = text.replace(/[\p{Emoji}\p{Extended_Pictographic}]/gu, ""); // Emojis
+      text = text.replace(/[\p{Emoji}\p{Extended_Pictographic}]/gu, ''); // Emojis
     }
 
     if (trim) {
@@ -75,36 +75,27 @@ export class FormatText {
    * @param {CapitalizeModeType} [mode] - The mode to capitalize the string
    * @returns {string} The capitalized string
    */
-  public capitalize(text?: string, mode: CapitalizeModeType = "words"): string {
+  public capitalize(text?: string, mode: CapitalizeModeType = 'words'): string {
     if (!text) {
-      return "";
+      return '';
     }
 
-    if (mode === "first-letter") {
+    if (mode === 'first-letter') {
       return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     }
 
-    const words = text.split(" ");
+    const words = text.split(' ');
 
     const capitalizedWords = words.map((word, index) => {
-      // Should capitalize when first word
-      if (word.match(/^(?:de|da|das|do|dos|del|by|à|e|o|ou|y)$/i)) {
-        if (index === 0) {
-          return word.toUpperCase();
-        }
-
-        return word.toLowerCase();
-      }
-
-      // Shouldn't capitalize when first word
-      if (word.match(/^(?:em|por|para)$/i)) {
-        if (!(index === 0)) {
+      // Should capitalize when first word, but not when in the middle
+      if (word.match(/^(?:em|por|para|de|da|das|do|dos|del|by|à|e|o|ou|y)$/i)) {
+        if (index !== 0) {
           return word.toLowerCase();
         }
       }
 
       // Exclusive for Senha Informática
-      if (word.match(/^(?:pj|ga7|lg|mt|gp|gbl|wl|hkd|nm|amd|crm|gg|rca|tti|mg|sc|gl)$/i)) {
+      if (word.match(/^(?:pj|ga7|lg|mt|gp|gbl|wl|hkd|nm|amd|crm|gg|rca|tti|mg|sc|gl|jbf)$/i)) {
         return word.toUpperCase();
       }
 
@@ -125,11 +116,11 @@ export class FormatText {
 
       // Matches patterns like "`A"
       if (word.match(/`[A-Z]/)) {
-        const [first, second] = word.split("`");
+        const [first, second] = word.split('`');
         return (
           first.charAt(0).toUpperCase() +
           first.slice(1).toLowerCase() +
-          "`" +
+          '`' +
           second.charAt(0).toUpperCase() +
           second.slice(1).toLowerCase()
         );
@@ -149,11 +140,11 @@ export class FormatText {
 
       // Matches patterns like "/A" (word after slash, e.g. "A/B")
       if (word.match(/\/[A-Z]/)) {
-        const [first, second] = word.split("/");
+        const [first, second] = word.split('/');
         return (
           first.charAt(0).toUpperCase() +
           first.slice(1).toLowerCase() +
-          "/" +
+          '/' +
           second.charAt(0).toUpperCase() +
           second.slice(1).toLowerCase()
         );
@@ -161,11 +152,11 @@ export class FormatText {
 
       // Matches patterns like "A-B"
       if (word.match(/[A-Z]-[A-Z]/)) {
-        const [first, second] = word.split("-");
+        const [first, second] = word.split('-');
         return (
           first.charAt(0).toUpperCase() +
           first.slice(1).toLowerCase() +
-          "-" +
+          '-' +
           second.charAt(0).toUpperCase() +
           second.slice(1).toLowerCase()
         );
@@ -179,7 +170,7 @@ export class FormatText {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     });
 
-    return capitalizedWords.join(" ").replace("`", "'");
+    return capitalizedWords.join(' ').replace('`', "'");
   }
 
   /**
@@ -190,10 +181,10 @@ export class FormatText {
    */
   public removeNonAlphanumeric(text?: string): string {
     if (!text) {
-      return "";
+      return '';
     }
 
-    return text.replace(/[^a-zA-Z0-9]/g, "");
+    return text.replace(/[^a-zA-Z0-9]/g, '');
   }
 
   /**
@@ -204,10 +195,10 @@ export class FormatText {
    */
   public removeLetters(text?: string): string {
     if (!text) {
-      return "";
+      return '';
     }
 
-    return text.replace(/[a-zA-Z]/g, "");
+    return text.replace(/[a-zA-Z]/g, '');
   }
 
   /**
@@ -218,21 +209,21 @@ export class FormatText {
    */
   public rtfToPlainText(rtf?: string): string {
     if (!rtf) {
-      return "";
+      return '';
     }
 
     let text = rtf;
 
     // Remove blocos RTF com chaves aninhadas (como fonttbl)
     while (text.match(/\{\\fonttbl[^{}]*(\{[^{}]*\}[^{}]*)*\}/g)) {
-      text = text.replace(/\{\\fonttbl[^{}]*(\{[^{}]*\}[^{}]*)*\}/g, "");
+      text = text.replace(/\{\\fonttbl[^{}]*(\{[^{}]*\}[^{}]*)*\}/g, '');
     }
 
     // Remove outros blocos de cabeçalho
-    text = text.replace(/\{\\colortbl[^}]*\}/g, "");
-    text = text.replace(/\{\\stylesheet[^}]*\}/g, "");
-    text = text.replace(/\{\\info[^}]*\}/g, "");
-    text = text.replace(/\{\\(\*)?\\[a-z]+[^}]*\}/g, "");
+    text = text.replace(/\{\\colortbl[^}]*\}/g, '');
+    text = text.replace(/\{\\stylesheet[^}]*\}/g, '');
+    text = text.replace(/\{\\info[^}]*\}/g, '');
+    text = text.replace(/\{\\(\*)?\\[a-z]+[^}]*\}/g, '');
 
     // Decodifica caracteres especiais
     text = text.replace(/\\'([0-9a-fA-F]{2})/g, (match, hex) => {
@@ -240,29 +231,29 @@ export class FormatText {
     });
 
     // Converte \par em quebra de linha ANTES de remover outros comandos
-    text = text.replace(/\\par\b/g, "\n");
+    text = text.replace(/\\par\b/g, '\n');
 
     // Remove comandos RTF
-    text = text.replace(/\\[a-z]{1,32}(-?\d{1,10})?[ ]?/gi, " ");
+    text = text.replace(/\\[a-z]{1,32}(-?\d{1,10})?[ ]?/gi, ' ');
 
     // Remove chaves, barras e ponto e vírgula soltos
-    text = text.replace(/[\{\}\\]/g, "");
-    text = text.replace(/^[;\s]+/gm, ""); // Remove ; no início de linhas
+    text = text.replace(/[\{\}\\]/g, '');
+    text = text.replace(/^[;\s]+/gm, ''); // Remove ; no início de linhas
 
     // Limpa quebras e espaços DUPLICADOS (mas mantém quebras únicas)
-    text = text.replace(/[\r\n]{2,}/g, "\n"); // Múltiplas quebras viram uma
-    text = text.replace(/ +/g, " "); // Múltiplos espaços viram um
+    text = text.replace(/[\r\n]{2,}/g, '\n'); // Múltiplas quebras viram uma
+    text = text.replace(/ +/g, ' '); // Múltiplos espaços viram um
 
     text = text.trim();
 
     // Remove possíveis resíduos de nomes de fontes comuns
-    text = text.replace(/^(Arial|Times New Roman|Courier New|MS Sans Serif|Calibri)[;\s]*/i, "");
+    text = text.replace(/^(Arial|Times New Roman|Courier New|MS Sans Serif|Calibri)[;\s]*/i, '');
 
     // Remove espaço + ponto solto no final
-    text = text.replace(/\s*\.\s*$/g, ".");
+    text = text.replace(/\s*\.\s*$/g, '.');
 
     // Remove pontos duplicados e pontos soltos no final
-    text = text.replace(/\.+$/g, ".");
+    text = text.replace(/\.+$/g, '.');
 
     return text;
   }
