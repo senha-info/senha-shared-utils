@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git+https://github.com/senha-info/senha-shared-utils.git"
   },
-  "author": "Bruno Gaspar <bruninhoogaspar@gmail.com>",
+  "author": "Bruno Gaspar <dev.brunogaspar@gmail.com>",
   "license": "MIT",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",

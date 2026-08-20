@@ -4,7 +4,7 @@ type CapitalizeModeType = 'words' | 'first-letter';
 
 type NormalizeOptions = {
   /**
-   * Removes diacritics from the text.
+   * Removes diacritics from the text (e.g. "João" -> "Joao").
    * Set this to `false` to preserve diacritics.
    * @default true
    */
@@ -26,9 +26,79 @@ type NormalizeOptions = {
 
   /**
    * Set the length of the text to which it should be normalized.
+   * Counted in Unicode code points (not UTF-16 units), so astral
+   * characters (e.g. rare CJK ideographs) aren't cut in half.
    */
   maxLength?: number;
 };
+
+/**
+ * Checks if a single character is a "base Latin letter + diacritic",
+ * e.g. "é", "ã", "ç", "ü" — as opposed to a character from another
+ * script that merely *looks* like a Latin letter (the actual case
+ * `confusables` is meant to catch, e.g. Cyrillic "а" vs Latin "a").
+ *
+ * Works by decomposing (NFD): a legitimate accented Latin letter
+ * decomposes into more than one code point, where the first is a
+ * plain ASCII letter. This works for any language (pt, fr, de, etc.)
+ * without needing a hardcoded list of Unicode ranges.
+ */
+function isDiacriticLatinChar(char: string): boolean {
+  const decomposed = char.normalize('NFD');
+  return decomposed.length > 1 && /^[A-Za-z]/.test(decomposed);
+}
+
+/**
+ * Matches a full emoji *sequence* as a single unit, not just one code
+ * point — this matters because most emojis are made of several code
+ * points glued together, e.g.:
+ *  - keycaps: digit + optional variation selector + U+20E3 ("1️⃣")
+ *  - ZWJ sequences: pictograph + U+200D + pictograph (...) ("👨‍👩‍👧‍👦")
+ *  - flags: two regional-indicator letters ("🇧🇷")
+ * If we protected code point by code point, `confusables` would still
+ * see the leftover joiners/selectors around the (now placeholder)
+ * base characters and normalize the sequence anyway.
+ */
+const EMOJI_SEQUENCE_RE =
+  /(\p{Extended_Pictographic}\uFE0F?(\u200D\p{Extended_Pictographic}\uFE0F?)*|[0-9#*]\uFE0F?\u20E3|\p{Regional_Indicator}{2})/gu;
+
+/**
+ * Temporarily swaps out characters/sequences we want `confusables` to
+ * leave alone for placeholder tokens (Private Use Area code points,
+ * which never occur in real text and aren't in confusables.txt), runs
+ * `confusables`' anti-spoofing pass on what's left, then restores the
+ * originals. Real homoglyphs (Cyrillic lookalikes, etc.) still get
+ * normalized either way — only the explicitly protected content survives.
+ */
+function withProtectedConfusables(
+  text: string,
+  { protectDiacritics, protectEmojis }: { protectDiacritics: boolean; protectEmojis: boolean },
+  run: (input: string) => string,
+): string {
+  const preserved: string[] = [];
+  const protect = (match: string): string => {
+    preserved.push(match);
+    return `\uE000${preserved.length - 1}\uE001`;
+  };
+
+  let protectedText = text;
+
+  if (protectEmojis) {
+    // Sequences first, and as whole units, so a later char-by-char
+    // pass (diacritics) can't split one apart.
+    protectedText = protectedText.replace(EMOJI_SEQUENCE_RE, protect);
+  }
+
+  if (protectDiacritics) {
+    protectedText = Array.from(protectedText)
+      .map((char) => (isDiacriticLatinChar(char) ? protect(char) : char))
+      .join('');
+  }
+
+  const result = run(protectedText);
+
+  return result.replace(/\uE000(\d+)\uE001/g, (_, index: string) => preserved[Number(index)]);
+}
 
 export class FormatText {
   /**
@@ -47,25 +117,63 @@ export class FormatText {
       return '';
     }
 
-    text = text.normalize('NFD').replace(/[\u00A0\u202F\u200B-\u200F\u2028\u2029\u2066-\u2069]/g, ''); // Invisibles
+    // Invisible/control characters: always stripped, regardless of options.
+    // These never have a legitimate reason to reach a database field.
+    text = text.replace(/[\u00A0\u202F\u200B-\u200F\u2028\u2029\u2066-\u2069]/g, '');
 
     if (removeDiacritics) {
-      text = text.replace(/[\u0300-\u036f]/g, ''); // Diacritics
+      // NFD decomposes accented letters into base letter + combining mark,
+      // e.g. "é" -> "e" + U+0301. We only do this decomposition when we're
+      // actually going to strip the marks — no reason to alter the string's
+      // internal representation otherwise.
+      text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Diacritics
+    } else {
+      // Always keep the string in composed form (NFC) when diacritics are
+      // preserved. Without this, two visually-identical strings coming from
+      // different sources (e.g. one NFC from a DB, one NFD from a browser)
+      // would fail a `===` comparison and have different `.length`.
+      text = text.normalize('NFC');
     }
 
     if (removeEmojis) {
-      text = text.replace(/[\p{Emoji}\p{Extended_Pictographic}]/gu, ''); // Emojis
+      // NOTE: intentionally NOT using \p{Emoji} here. That property also
+      // matches plain digits 0-9, '#', and '*', because they're part of
+      // "keycap" emoji sequences (1️⃣, #️⃣). Using \p{Emoji} alone strips
+      // digits from unrelated text. \p{Extended_Pictographic} covers the
+      // vast majority of real emojis (faces, objects, symbols, flags)
+      // without touching digits.
+      text = text.replace(/\p{Extended_Pictographic}/gu, ''); // Emojis
     }
 
     if (trim) {
       text = text.trim(); // Trim
     }
 
-    if (maxLength !== undefined && text.length > maxLength) {
-      text = text.substring(0, maxLength);
+    if (maxLength !== undefined) {
+      // Use Array.from (or [...text]) instead of .substring/.slice so we
+      // count Unicode code points, not UTF-16 code units. .substring() can
+      // split a surrogate pair in half (e.g. certain emoji or rare CJK
+      // characters), producing an invalid/corrupted trailing character.
+      const chars = Array.from(text);
+
+      if (chars.length > maxLength) {
+        text = chars.slice(0, maxLength).join('');
+      }
     }
 
-    return removeConfusables(text);
+    // `confusables` normalizes homoglyphs/lookalike characters for
+    // anti-spoofing purposes (e.g. Cyrillic "а" -> Latin "a"). Its
+    // confusables.txt dataset also treats accented Latin letters (é, ã,
+    // ç...) AND emoji sequences like keycaps (1️⃣) as "confusable" with
+    // their plain-character equivalent, so calling it unconditionally
+    // strips them even when removeDiacritics/removeEmojis are false.
+    // Shield whatever the caller asked to preserve before running it.
+    const protectDiacritics = !removeDiacritics;
+    const protectEmojis = !removeEmojis;
+
+    return protectDiacritics || protectEmojis
+      ? withProtectedConfusables(text, { protectDiacritics, protectEmojis }, removeConfusables)
+      : removeConfusables(text);
   }
 
   /**
@@ -94,9 +202,26 @@ export class FormatText {
         }
       }
 
-      // Exclusive for Senha Informática
+      // Custom validations
       if (word.match(/^(?:pj|ga7|lg|mt|gp|gbl|wl|hkd|nm|amd|crm|gg|rca|tti|mg|sc|gl|jbf)$/i)) {
         return word.toUpperCase();
+      }
+
+      // Matches fiscal words
+      if (word.match(/^(?:efd|ncm|cfop)$/i)) {
+        return word.toUpperCase();
+      }
+      if (word.match(/^(?:dfe)$/i)) {
+        return 'DFe';
+      }
+      if (word.match(/^(?:df-e)$/i)) {
+        return 'DF-e';
+      }
+      if (word.match(/^(?:nfe)$/i)) {
+        return 'NFe';
+      }
+      if (word.match(/^(?:nf-e)$/i)) {
+        return 'NF-e';
       }
 
       // Matches special cases
