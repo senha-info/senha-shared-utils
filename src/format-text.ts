@@ -183,7 +183,7 @@ export class FormatText {
    * @param {CapitalizeModeType} [mode] - The mode to capitalize the string
    * @returns {string} The capitalized string
    */
-  public capitalize(text?: string, mode: CapitalizeModeType = 'words'): string | undefined {
+  public capitalize(text?: string | null, mode: CapitalizeModeType = 'words'): string | undefined {
     if (!text) {
       return;
     }
@@ -304,7 +304,7 @@ export class FormatText {
    * @param {string} [text] - The string to remove non-alphanumeric characters
    * @returns {string} The string without non-alphanumeric characters
    */
-  public removeNonAlphanumeric(text?: string): string | undefined {
+  public removeNonAlphanumeric(text?: string | null): string | undefined {
     if (!text) {
       return;
     }
@@ -318,7 +318,7 @@ export class FormatText {
    * @param {string} [text] - The string to remove letters
    * @returns {string} The string without letters
    */
-  public removeLetters(text?: string): string | undefined {
+  public removeLetters(text?: string | null): string | undefined {
     if (!text) {
       return;
     }
@@ -332,7 +332,7 @@ export class FormatText {
    * @param {string} [rtf] - The RTF to parse
    * @returns {string} The string in plain text
    */
-  public rtfToPlainText(rtf?: string): string | undefined {
+  public rtfToPlainText(rtf?: string | null): string | undefined {
     if (!rtf) {
       return;
     }
