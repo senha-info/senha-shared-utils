@@ -25,6 +25,7 @@ export function generateMetadataResponse({
     return {
       count,
       maxPage,
+      limit,
       previousURL,
       nextURL,
       extra: hasExtra ? extra : undefined,
@@ -34,6 +35,7 @@ export function generateMetadataResponse({
   return {
     count,
     max_page: maxPage,
+    limit,
     previous_url: previousURL,
     next_url: nextURL,
     extra: hasExtra ? extra : undefined,
