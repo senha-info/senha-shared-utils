@@ -112,9 +112,9 @@ export class FormatText {
   public normalize(
     text?: string,
     { removeDiacritics = true, removeEmojis = true, trim = true, maxLength }: NormalizeOptions = {},
-  ): string {
+  ): string | undefined {
     if (!text) {
-      return '';
+      return;
     }
 
     // Invisible/control characters: always stripped, regardless of options.
@@ -183,9 +183,9 @@ export class FormatText {
    * @param {CapitalizeModeType} [mode] - The mode to capitalize the string
    * @returns {string} The capitalized string
    */
-  public capitalize(text?: string, mode: CapitalizeModeType = 'words'): string {
+  public capitalize(text?: string, mode: CapitalizeModeType = 'words'): string | undefined {
     if (!text) {
-      return '';
+      return;
     }
 
     if (mode === 'first-letter') {
@@ -304,9 +304,9 @@ export class FormatText {
    * @param {string} [text] - The string to remove non-alphanumeric characters
    * @returns {string} The string without non-alphanumeric characters
    */
-  public removeNonAlphanumeric(text?: string): string {
+  public removeNonAlphanumeric(text?: string): string | undefined {
     if (!text) {
-      return '';
+      return;
     }
 
     return text.replace(/[^a-zA-Z0-9]/g, '');
@@ -318,9 +318,9 @@ export class FormatText {
    * @param {string} [text] - The string to remove letters
    * @returns {string} The string without letters
    */
-  public removeLetters(text?: string): string {
+  public removeLetters(text?: string): string | undefined {
     if (!text) {
-      return '';
+      return;
     }
 
     return text.replace(/[a-zA-Z]/g, '');
@@ -332,9 +332,9 @@ export class FormatText {
    * @param {string} [rtf] - The RTF to parse
    * @returns {string} The string in plain text
    */
-  public rtfToPlainText(rtf?: string): string {
+  public rtfToPlainText(rtf?: string): string | undefined {
     if (!rtf) {
-      return '';
+      return;
     }
 
     let text = rtf;
