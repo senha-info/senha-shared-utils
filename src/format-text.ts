@@ -112,9 +112,9 @@ export class FormatText {
   public normalize(
     text?: string,
     { removeDiacritics = true, removeEmojis = true, trim = true, maxLength }: NormalizeOptions = {},
-  ): string | undefined {
+  ): string | undefined | null {
     if (!text) {
-      return;
+      return text;
     }
 
     // Invisible/control characters: always stripped, regardless of options.
@@ -183,9 +183,9 @@ export class FormatText {
    * @param {CapitalizeModeType} [mode] - The mode to capitalize the string
    * @returns {string} The capitalized string
    */
-  public capitalize(text?: string | null, mode: CapitalizeModeType = 'words'): string | undefined {
+  public capitalize(text?: string | null, mode: CapitalizeModeType = 'words'): string | undefined | null {
     if (!text) {
-      return;
+      return text;
     }
 
     if (mode === 'first-letter') {
@@ -304,9 +304,9 @@ export class FormatText {
    * @param {string} [text] - The string to remove non-alphanumeric characters
    * @returns {string} The string without non-alphanumeric characters
    */
-  public removeNonAlphanumeric(text?: string | null): string | undefined {
+  public removeNonAlphanumeric(text?: string | null): string | undefined | null {
     if (!text) {
-      return;
+      return text;
     }
 
     return text.replace(/[^a-zA-Z0-9]/g, '');
@@ -318,9 +318,9 @@ export class FormatText {
    * @param {string} [text] - The string to remove letters
    * @returns {string} The string without letters
    */
-  public removeLetters(text?: string | null): string | undefined {
+  public removeLetters(text?: string | null): string | undefined | null {
     if (!text) {
-      return;
+      return text;
     }
 
     return text.replace(/[a-zA-Z]/g, '');
@@ -332,9 +332,9 @@ export class FormatText {
    * @param {string} [rtf] - The RTF to parse
    * @returns {string} The string in plain text
    */
-  public rtfToPlainText(rtf?: string | null): string | undefined {
+  public rtfToPlainText(rtf?: string | null): string | undefined | null {
     if (!rtf) {
-      return;
+      return rtf;
     }
 
     let text = rtf;
