@@ -316,7 +316,10 @@ export class FormatText {
   public removeNonAlphanumeric(text: string): string;
   public removeNonAlphanumeric(text: null): null;
   public removeNonAlphanumeric(text: undefined): undefined;
-  public removeNonAlphanumeric(text?: string | null): string | undefined | null;
+  public removeNonAlphanumeric(text?: string | null): string | null;
+  public removeNonAlphanumeric(text?: string | undefined): string | undefined;
+  public removeNonAlphanumeric(text?: null | undefined): null | undefined;
+  public removeNonAlphanumeric(text?: string | null | undefined): string | undefined | null;
   public removeNonAlphanumeric(text?: string | null): string | undefined | null {
     if (!text) {
       return text;
