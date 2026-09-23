@@ -109,8 +109,13 @@ export class FormatText {
    *
    * @returns {string} The normalized string
    */
+  // Overloads: o tipo de retorno acompanha o tipo de entrada.
+  public normalize(text: string, options?: NormalizeOptions): string;
+  public normalize(text: null, options?: NormalizeOptions): null;
+  public normalize(text: undefined, options?: NormalizeOptions): undefined;
+  public normalize(text?: string | null, options?: NormalizeOptions): string | undefined | null;
   public normalize(
-    text?: string,
+    text?: string | null,
     { removeDiacritics = true, removeEmojis = true, trim = true, maxLength }: NormalizeOptions = {},
   ): string | undefined | null {
     if (!text) {
@@ -183,6 +188,10 @@ export class FormatText {
    * @param {CapitalizeModeType} [mode] - The mode to capitalize the string
    * @returns {string} The capitalized string
    */
+  public capitalize(text: string, mode?: CapitalizeModeType): string;
+  public capitalize(text: null, mode?: CapitalizeModeType): null;
+  public capitalize(text: undefined, mode?: CapitalizeModeType): undefined;
+  public capitalize(text?: string | null, mode?: CapitalizeModeType): string | undefined | null;
   public capitalize(text?: string | null, mode: CapitalizeModeType = 'words'): string | undefined | null {
     if (!text) {
       return text;
@@ -304,6 +313,10 @@ export class FormatText {
    * @param {string} [text] - The string to remove non-alphanumeric characters
    * @returns {string} The string without non-alphanumeric characters
    */
+  public removeNonAlphanumeric(text: string): string;
+  public removeNonAlphanumeric(text: null): null;
+  public removeNonAlphanumeric(text: undefined): undefined;
+  public removeNonAlphanumeric(text?: string | null): string | undefined | null;
   public removeNonAlphanumeric(text?: string | null): string | undefined | null {
     if (!text) {
       return text;
@@ -318,6 +331,10 @@ export class FormatText {
    * @param {string} [text] - The string to remove letters
    * @returns {string} The string without letters
    */
+  public removeLetters(text: string): string;
+  public removeLetters(text: null): null;
+  public removeLetters(text: undefined): undefined;
+  public removeLetters(text?: string | null): string | undefined | null;
   public removeLetters(text?: string | null): string | undefined | null {
     if (!text) {
       return text;
@@ -332,6 +349,10 @@ export class FormatText {
    * @param {string} [rtf] - The RTF to parse
    * @returns {string} The string in plain text
    */
+  public rtfToPlainText(rtf: string): string;
+  public rtfToPlainText(rtf: null): null;
+  public rtfToPlainText(rtf: undefined): undefined;
+  public rtfToPlainText(rtf?: string | null): string | undefined | null;
   public rtfToPlainText(rtf?: string | null): string | undefined | null {
     if (!rtf) {
       return rtf;
