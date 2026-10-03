@@ -1,19 +1,7 @@
-export * from './app-log';
-export * from './assign-default-values';
-export * from './execute-promise';
-export * from './format-case';
-export * from './format-text';
-export * from './generate-metadata-response';
-export * from './get-ip-address';
-export * from './get-pagination';
-export * from './get-random-data';
-export * from './http-status-enum';
-export * from './parse-request-url';
-export * from './process-form-data';
-export * from './remove-undefined-props';
-export * from './split-array';
-export * from './types';
-export * from './windows-service';
-export * from './xor-encrypt';
+export * from './v2/index.js';
 
-export * as Exceptions from './exceptions';
+/**
+ * @deprecated The v1 API is deprecated and will be removed in v3.0.0.
+ * Please migrate to the v2 API `@senhainfo/shared-utils`.
+ */
+export * as v1 from './v1/index.js';

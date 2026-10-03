@@ -1,5 +1,6 @@
 import { parseRequestURL } from './parse-request-url';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface GenerateMetadataResponseProps extends Record<string, any> {
   mode?: 'camel-case' | 'snake-case';
   page: number;

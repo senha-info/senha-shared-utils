@@ -385,7 +385,7 @@ export class FormatText {
     text = text.replace(/\\[a-z]{1,32}(-?\d{1,10})?[ ]?/gi, ' ');
 
     // Remove chaves, barras e ponto e vírgula soltos
-    text = text.replace(/[\{\}\\]/g, '');
+    text = text.replace(/[{}\\/]/g, '');
     text = text.replace(/^[;\s]+/gm, ''); // Remove ; no início de linhas
 
     // Limpa quebras e espaços DUPLICADOS (mas mantém quebras únicas)

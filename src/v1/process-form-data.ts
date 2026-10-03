@@ -1,10 +1,10 @@
-import { MultipartFile } from "@fastify/multipart";
-import { format } from "date-fns";
-import { FastifyRequest } from "fastify";
-import fs from "node:fs";
-import path from "node:path";
-import promises from "node:stream/promises";
-import { Exceptions } from ".";
+import { MultipartFile } from '@fastify/multipart';
+import { format } from 'date-fns';
+import { FastifyRequest } from 'fastify';
+import fs from 'node:fs';
+import path from 'node:path';
+import promises from 'node:stream/promises';
+import { Exceptions } from '.';
 
 export class ProcessFormData {
   private async downloadFile(data: MultipartFile, uploadDir: string) {
@@ -12,9 +12,9 @@ export class ProcessFormData {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    const basename = data.filename.split(".").shift();
+    const basename = data.filename.split('.').shift();
     const extension = path.extname(data.filename);
-    const filename = `${format(new Date(), "yyyy-MM-dd")}-${basename}${extension}`;
+    const filename = `${format(new Date(), 'yyyy-MM-dd')}-${basename}${extension}`;
     const uploadPath = path.join(uploadDir, filename);
 
     await promises.pipeline(data.file, fs.createWriteStream(uploadPath));
@@ -34,17 +34,18 @@ export class ProcessFormData {
   async execute<T>(request: FastifyRequest<{ Body?: T }>, uploadDir: string): Promise<{ body: T; files: string[] }> {
     if (!request.isMultipart()) {
       throw new Exceptions.BadRequestException({
-        message: "A requisição não é multipart/form-data",
+        message: 'A requisição não é multipart/form-data',
       });
     }
 
     const parts = request.parts();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body: Record<string, any> = {};
     const files: string[] = [];
 
     for await (const part of parts) {
-      if (part.type === "field") {
+      if (part.type === 'field') {
         const match = part.fieldname.match(/^(.+)\[(\d+)\]$/);
 
         if (match) {

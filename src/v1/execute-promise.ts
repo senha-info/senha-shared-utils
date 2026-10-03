@@ -1,5 +1,5 @@
-import { AxiosError } from "axios";
-import { AppException } from "./exceptions";
+import { AxiosError } from 'axios';
+import { AppException } from './exceptions';
 
 interface ExecutePromiseConfig {
   debug?: boolean;
@@ -12,6 +12,7 @@ interface ExecutePromiseConfig {
  * @param {ExecutePromiseConfig} [config] - The configuration object
  * @returns {Promise<[T, string | null, any?]>} The result, error message and error object
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function executePromise<T>(promise: Promise<T>, config?: ExecutePromiseConfig): Promise<[T, string | null, any?]>;
 
 async function executePromise<T>(promise: Promise<T>, config?: ExecutePromiseConfig) {
@@ -21,7 +22,7 @@ async function executePromise<T>(promise: Promise<T>, config?: ExecutePromiseCon
   } catch (error) {
     if (config?.debug) console.error(error);
 
-    let message = "Error while executing promise";
+    let message = 'Error while executing promise';
 
     if (error instanceof Error) {
       message = error.message;
