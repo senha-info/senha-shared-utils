@@ -39,7 +39,9 @@
     "test:watch": "vitest",
     "build": "tsup",
     "prepare": "npm run build",
-    "check": "npm run lint && npm run test && npm run types:check"
+    "validate": "npm run lint && npm run test && npm run types:check",
+    "preversion": "npm run validate",
+    "postversion": "git push origin main --follow-tags"
   },
   "publishConfig": {
     "access": "public"
