@@ -1,4 +1,4 @@
-import { Service, ServiceConfig } from "node-windows";
+import type { Service, ServiceConfig } from 'node-windows';
 
 interface WindowsServiceOptions extends Partial<ServiceConfig> {
   name: string;
@@ -12,7 +12,7 @@ interface WindowsServiceOptions extends Partial<ServiceConfig> {
 
 export class WindowsService {
   private options: Partial<WindowsServiceOptions> = {};
-  public service: Service;
+  public service!: Service;
 
   /**
    * Constructor
@@ -24,8 +24,15 @@ export class WindowsService {
    * const service = new WindowsService({ name: "My Service", script: "path/to/service" });
    */
   constructor(options: WindowsServiceOptions) {
+    if (process.platform !== 'win32') {
+      throw new Error('WindowsService is only supported on Windows platforms.');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const nodeWindows = require('node-windows');
+
     this.options = options;
-    this.service = new Service(options);
+    this.service = new nodeWindows.Service(options);
 
     if (options.logOnAs) {
       this.service.logOnAs.account = options.logOnAs.account;
@@ -37,21 +44,21 @@ export class WindowsService {
 
   private initialize() {
     this.service
-      .on("install", () => {
+      .on('install', () => {
         this.service.start();
         console.log(`Service "${this.options.name}" installed`);
       })
-      .on("alreadyinstalled", () => {
+      .on('alreadyinstalled', () => {
         console.log(`Service "${this.options.name}" is already installed`);
       })
-      .on("uninstall", () => {
+      .on('uninstall', () => {
         console.log(`Service "${this.options.name}" uninstalled`);
       })
-      .on("start", () => {
-        console.log("Service started");
+      .on('start', () => {
+        console.log('Service started');
       })
-      .on("stop", () => {
-        console.log("Service stopped");
+      .on('stop', () => {
+        console.log('Service stopped');
       });
   }
 }

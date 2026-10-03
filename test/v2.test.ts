@@ -35,6 +35,7 @@ import {
   toPascalCase,
   toSnakeCase,
   v1,
+  WindowsService,
   xorEncrypt,
 } from '../src/index.js';
 
@@ -475,3 +476,30 @@ describe('v1 compatibility namespace', () => {
     expect(v1.Exceptions).toBeDefined();
   });
 });
+
+describe('WindowsService (v2 & v1)', () => {
+  it('throws friendly error when instantiated on non-Windows platforms', () => {
+    const originalPlatform = process.platform;
+    try {
+      Object.defineProperty(process, 'platform', { value: 'linux' });
+      expect(() => {
+        new WindowsService({
+          name: 'test',
+          description: 'test',
+          script: 'test.js',
+        });
+      }).toThrow('WindowsService is only supported on Windows platforms.');
+
+      expect(() => {
+        new v1.WindowsService({
+          name: 'test',
+          description: 'test',
+          script: 'test.js',
+        });
+      }).toThrow('WindowsService is only supported on Windows platforms.');
+    } finally {
+      Object.defineProperty(process, 'platform', { value: originalPlatform });
+    }
+  });
+});
+

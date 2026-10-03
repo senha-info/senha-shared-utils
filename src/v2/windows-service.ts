@@ -1,4 +1,4 @@
-import { Service, ServiceConfig } from 'node-windows';
+import type { Service, ServiceConfig } from 'node-windows';
 
 export interface WindowsServiceOptions extends Partial<ServiceConfig> {
   name: string;
@@ -10,17 +10,28 @@ export interface WindowsServiceOptions extends Partial<ServiceConfig> {
   };
 }
 
+/**
+ * Wrapper for managing Windows Background Services using `node-windows`.
+ * Note: Only functional on Windows platforms (`win32`).
+ */
 export class WindowsService {
   private options: Partial<WindowsServiceOptions> = {};
-  public service: Service;
+  public service!: Service;
 
   /**
    * Constructor
    * @param options - Options for the Windows service
    */
   constructor(options: WindowsServiceOptions) {
+    if (process.platform !== 'win32') {
+      throw new Error('WindowsService is only supported on Windows platforms.');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const nodeWindows = require('node-windows');
+
     this.options = options;
-    this.service = new Service(options);
+    this.service = new nodeWindows.Service(options);
 
     if (options.logOnAs) {
       this.service.logOnAs.account = options.logOnAs.account;
