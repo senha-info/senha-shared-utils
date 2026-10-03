@@ -39,7 +39,7 @@
     "test:watch": "vitest",
     "build": "tsup",
     "prepare": "npm run build",
-    "check": "npm run lint && npm run types:check",
+    "check": "npm run lint && npm run test && npm run types:check",
     "release": "npm run check && npm version patch && git push origin main --follow-tags"
   },
   "publishConfig": {
