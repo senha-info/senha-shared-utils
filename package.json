@@ -1,6 +1,6 @@
 {
   "name": "@senhainfo/shared-utils",
-  "version": "1.6.8",
+  "version": "1.6.9",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/senha-info/senha-shared-utils.git"
@@ -39,8 +39,7 @@
     "test:watch": "vitest",
     "build": "tsup",
     "prepare": "npm run build",
-    "check": "npm run lint && npm run types:check",
-    "release": "npm run check && npm version patch && git push origin main --follow-tags"
+    "check": "npm run lint && npm run test && npm run types:check"
   },
   "publishConfig": {
     "access": "public"
