@@ -28,6 +28,16 @@
     },
     "./package.json": "./package.json"
   },
+  "typesVersions": {
+    "*": {
+      "v1": [
+        "./lib/v1/index.d.ts"
+      ],
+      "v2": [
+        "./lib/v2/index.d.ts"
+      ]
+    }
+  },
   "files": [
     "lib"
   ],
