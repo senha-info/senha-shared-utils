@@ -1,29 +1,28 @@
 import { describe, expect, it } from 'vitest';
 import {
   AppException,
-  BadRequestException,
-  ConflictException,
-  ForbiddenException,
-  FormatCase,
-  FormatText,
-  HttpStatusCodes,
-  InternalServerException,
-  InvalidCredentialsException,
-  NotFoundException,
-  UnauthorizedException,
   assignDefaultValues,
+  BadRequestException,
   capitalize,
   capitalizeText,
+  ConflictException,
   executePromise,
+  ForbiddenException,
+  FormatCase,
   formatCase,
+  FormatText,
   formatText,
   generateMetadataResponse,
   getIPAddress,
   getPagination,
   getRandomData,
+  HttpStatusCodes,
+  InternalServerException,
   isAppException,
   normalize,
   normalizeText,
+  NotFoundException,
+  UnprocessableEntityException,
   parseRequestURL,
   removeLetters,
   removeNonAlphanumeric,
@@ -34,6 +33,7 @@ import {
   toKebabCase,
   toPascalCase,
   toSnakeCase,
+  UnauthorizedException,
   v1,
   WindowsService,
   xorEncrypt,
@@ -119,53 +119,129 @@ describe('FormatText (v2)', () => {
 });
 
 describe('Exceptions (v2)', () => {
-  it('AppException extends Error and preserves stack trace and prototype', () => {
-    const err = new AppException('TEST_ERR', 'Test error message', HttpStatusCodes.BAD_REQUEST, {
-      field: 'name',
-    });
+  it('instantiates AppException with default values', () => {
+    const error = new AppException();
 
-    expect(err).toBeInstanceOf(Error);
-    expect(err).toBeInstanceOf(AppException);
-    expect(err.name).toBe('TEST_ERR');
-    expect(err.message).toBe('Test error message');
-    expect(err.status).toBe(HttpStatusCodes.BAD_REQUEST);
-    expect(err.details).toEqual({ field: 'name' });
-    expect(err.stack).toBeDefined();
+    expect(error).toBeInstanceOf(Error);
+    expect(error).toBeInstanceOf(AppException);
+    expect(error.name).toBe('AppException');
+    expect(error.code).toBeUndefined();
+    expect(error.message).toBe('Erro ao processar requisição');
+    expect(error.status).toBe(HttpStatusCodes.BAD_REQUEST);
+    expect(error.details).toBeUndefined();
+    expect(error.cause).toBeUndefined();
+    expect(error.isOperational).toBe(true);
+    expect(typeof error.timestamp).toBe('string');
+    expect(new Date(error.timestamp).getTime()).not.toBeNaN();
+    expect(error.stack).toBeDefined();
 
-    const json = err.toJSON();
+    const json = error.toJSON();
+    expect(json.name).toBe('AppException');
+    expect(json.code).toBeUndefined();
     expect(json.status).toBe(400);
-    expect(json.name).toBe('TEST_ERR');
-
-    expect(isAppException(err)).toBe(true);
-    expect(isAppException(new Error('regular error'))).toBe(false);
+    expect(json.message).toBe('Erro ao processar requisição');
   });
 
-  it('subclasses of AppException correctly inherit status and codes', () => {
-    const badRequest = new BadRequestException({ message: 'Invalid data' });
-    expect(badRequest).toBeInstanceOf(Error);
-    expect(badRequest).toBeInstanceOf(AppException);
-    expect(badRequest.status).toBe(HttpStatusCodes.BAD_REQUEST);
-    expect(badRequest.message).toBe('Invalid data');
+  it('supports shorthand string message instantiation', () => {
+    const error = new AppException('Falha ao processar pagamento');
 
-    const notFound = new NotFoundException();
-    expect(notFound.status).toBe(HttpStatusCodes.NOT_FOUND);
-    expect(notFound.message).toBe('Não encontrado');
+    expect(error.message).toBe('Falha ao processar pagamento');
+    expect(error.code).toBeUndefined();
+    expect(error.status).toBe(HttpStatusCodes.BAD_REQUEST);
+  });
+
+  it('supports modern props object configuration with custom code and cause error chaining', () => {
+    const causeError = new Error('Database connection timed out');
+    const error = new AppException({
+      message: 'Não foi possível salvar o registro',
+      code: 'DB_ERROR',
+      status: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+      details: { table: 'users' },
+      cause: causeError,
+    });
+
+    expect(error.message).toBe('Não foi possível salvar o registro');
+    expect(error.code).toBe('DB_ERROR');
+    expect(error.status).toBe(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+    expect(error.details).toEqual({ table: 'users' });
+    expect(error.cause).toBe(causeError);
+
+    const json = error.toJSON();
+    expect(json.code).toBe('DB_ERROR');
+  });
+
+  it('serializes to JSON correctly with toJSON()', () => {
+    const error = new BadRequestException({
+      message: 'Dados inválidos',
+      code: 'INVALID_FIELDS',
+      details: [{ field: 'email', reason: 'invalid format' }],
+    });
+
+    const json = error.toJSON();
+    expect(json.name).toBe('BadRequestException');
+    expect(json.code).toBe('INVALID_FIELDS');
+    expect(json.message).toBe('Dados inválidos');
+    expect(json.status).toBe(400);
+    expect(json.details).toEqual([{ field: 'email', reason: 'invalid format' }]);
+    expect(typeof json.timestamp).toBe('string');
+  });
+
+  it('correctly identifies AppException via isAppException type-guard', () => {
+    const appError = new BadRequestException('Erro');
+    const genericError = new Error('Erro genérico');
+    const duckTypedError = {
+      message: 'Erro',
+      status: 400,
+    };
+
+    expect(isAppException(appError)).toBe(true);
+    expect(isAppException(duckTypedError)).toBe(true);
+    expect(isAppException(genericError)).toBe(false);
+    expect(isAppException(null)).toBe(false);
+    expect(isAppException('string error')).toBe(false);
+  });
+
+  it('provides specialized HTTP exception subclasses with correct defaults and string shorthand', () => {
+    const badRequest = new BadRequestException('Entrada inválida');
+    expect(badRequest.status).toBe(HttpStatusCodes.BAD_REQUEST);
+    expect(badRequest.code).toBeUndefined();
+    expect(badRequest.name).toBe('BadRequestException');
+    expect(badRequest.message).toBe('Entrada inválida');
 
     const unauthorized = new UnauthorizedException();
     expect(unauthorized.status).toBe(HttpStatusCodes.UNAUTHORIZED);
-
-    const internal = new InternalServerException();
-    expect(internal.status).toBe(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+    expect(unauthorized.code).toBeUndefined();
+    expect(unauthorized.name).toBe('UnauthorizedException');
+    expect(unauthorized.message).toBe('Não autorizado');
 
     const forbidden = new ForbiddenException();
     expect(forbidden.status).toBe(HttpStatusCodes.FORBIDDEN);
+    expect(forbidden.code).toBeUndefined();
+
+    const notFound = new NotFoundException('Item não encontrado');
+    expect(notFound.status).toBe(HttpStatusCodes.NOT_FOUND);
+    expect(notFound.code).toBeUndefined();
+    expect(notFound.message).toBe('Item não encontrado');
 
     const conflict = new ConflictException();
     expect(conflict.status).toBe(HttpStatusCodes.CONFLICT);
+    expect(conflict.code).toBeUndefined();
 
-    const invalidCreds = new InvalidCredentialsException();
-    expect(invalidCreds.status).toBe(HttpStatusCodes.UNAUTHORIZED);
-    expect(invalidCreds.message).toBe('Usuário ou senha incorretos');
+    const unprocessable = new UnprocessableEntityException();
+    expect(unprocessable.status).toBe(HttpStatusCodes.UNPROCESSABLE_ENTITY);
+    expect(unprocessable.code).toBeUndefined();
+
+    const internal = new InternalServerException();
+    expect(internal.status).toBe(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+    expect(internal.code).toBeUndefined();
+
+    // Supports custom code if passed
+    const withCustomCode = new UnauthorizedException({
+      code: 'INVALID_CREDENTIALS',
+      message: 'Usuário ou senha incorretos',
+    });
+    expect(withCustomCode.code).toBe('INVALID_CREDENTIALS');
+    expect(withCustomCode.message).toBe('Usuário ou senha incorretos');
   });
 });
 
@@ -193,8 +269,15 @@ describe('executePromise (v2)', () => {
     const [data, error, rawError] = await executePromise(Promise.reject(appErr));
 
     expect(data).toBeNull();
-    expect(error).toBe('(404 - SI_NOT_FOUND) User not found');
+    expect(error).toBe('(404) User not found');
     expect(rawError).toBe(appErr);
+
+    const appErrWithCode = new NotFoundException({
+      message: 'User not found',
+      code: 'USER_NOT_FOUND',
+    });
+    const [, errWithCode] = await executePromise(Promise.reject(appErrWithCode));
+    expect(errWithCode).toBe('(404 - USER_NOT_FOUND) User not found');
   });
 
   it('formats message nicely for duck-typed AxiosError', async () => {
@@ -502,4 +585,3 @@ describe('WindowsService (v2 & v1)', () => {
     }
   });
 });
-

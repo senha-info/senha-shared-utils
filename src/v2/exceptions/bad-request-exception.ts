@@ -1,16 +1,23 @@
 import { HttpStatusCodes } from '../http-status-enum.js';
-import { AppException, AppExceptionEnum, AppExceptionProps } from './app-exception.js';
+import {
+  AppException,
+  AppExceptionConstructorProps,
+} from './app-exception.js';
+
+export type BadRequestExceptionProps = AppExceptionConstructorProps | string;
 
 /**
  * Exception representing HTTP 400 Bad Request.
  */
 export class BadRequestException extends AppException {
-  constructor(props?: AppExceptionProps) {
-    super(
-      props?.name ?? AppExceptionEnum.BAD_REQUEST,
-      props?.message ?? 'Erro ao processar requisição',
-      HttpStatusCodes.BAD_REQUEST,
-      props?.details,
-    );
+  constructor(props?: BadRequestExceptionProps) {
+    const isString = typeof props === 'string';
+    super({
+      code: isString ? undefined : props?.code,
+      message: isString ? props : (props?.message ?? 'Erro ao processar requisição'),
+      status: HttpStatusCodes.BAD_REQUEST,
+      details: isString ? undefined : props?.details,
+      cause: isString ? undefined : props?.cause,
+    });
   }
 }

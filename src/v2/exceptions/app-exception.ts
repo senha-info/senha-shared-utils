@@ -1,58 +1,83 @@
 import { HttpStatusCodes } from '../http-status-enum.js';
 
-export enum AppExceptionEnum {
-  BAD_REQUEST = 'SI_BAD_REQUEST',
-  INTERNAL_SERVER_ERROR = 'SI_INTERNAL_SERVER_ERROR',
-  NOT_FOUND = 'SI_NOT_FOUND',
-  INVALID_CREDENTIALS = 'SI_INVALID_CREDENTIALS',
-  INVALID_TOKEN = 'SI_INVALID_TOKEN',
-  MISSING_TOKEN = 'SI_MISSING_TOKEN',
-  UNAUTHORIZED = 'SI_UNAUTHORIZED',
-  FORBIDDEN = 'SI_FORBIDDEN',
-  INVALID_REQUEST_BODY = 'SI_INVALID_REQUEST_BODY',
-  INACTIVE = 'SI_INACTIVE',
-  UNAVAILABLE_STOCK = 'SI_UNAVAILABLE_STOCK',
-  CONFLICT = 'SI_CONFLICT',
-  UNPROCESSABLE_ENTITY = 'SI_UNPROCESSABLE_ENTITY',
-  UNAUTHORIZED_ACCESS = 'SI_UNAUTHORIZED_ACCESS',
-  INVALID_USER = 'SI_INVALID_USER',
-}
-
 export interface AppExceptionProps {
-  name?: AppExceptionEnum | string;
+  /**
+   * Optional machine-readable error code defined by the consuming application (e.g. 'INVALID_CREDENTIALS').
+   */
+  code?: string;
+
+  /**
+   * Human-readable error message.
+   */
   message?: string;
+
+  /**
+   * HTTP status code corresponding to the error.
+   */
+  status?: HttpStatusCodes;
+
+  /**
+   * Optional additional metadata or validation error details.
+   */
   details?: unknown;
+
+  /**
+   * Original error cause for error chaining (ES2022).
+   */
+  cause?: unknown;
 }
 
-export type AppExceptionConstructorProps = Omit<AppExceptionProps, 'name'>;
+export type AppExceptionConstructorProps = Omit<AppExceptionProps, 'status'>;
+
+/**
+ * Standard serialized JSON format for application exceptions in API responses.
+ */
+export interface AppExceptionJSON {
+  name: string;
+  message: string;
+  status: number;
+  code?: string;
+  details?: unknown;
+  timestamp: string;
+}
 
 /**
  * Base application exception extending native JavaScript Error.
- * Preserves V8 stack traces, supports `instanceof Error`, and provides JSON serialization.
+ * Preserves V8 stack traces, supports `instanceof Error`, ES2022 error chaining (`cause`),
+ * and provides standardized JSON serialization for REST API responses.
  */
 export class AppException extends Error {
   public override readonly name: string;
+  public readonly code?: string;
   public override readonly message: string;
   public readonly status: HttpStatusCodes;
   public readonly details?: unknown;
+  public readonly cause?: unknown;
+  public readonly isOperational = true;
+  public readonly timestamp: string;
 
   /**
-   * @param name - Error identifier name (defaults to AppExceptionEnum.BAD_REQUEST)
-   * @param message - Human-readable error message
-   * @param status - HTTP status code (defaults to HttpStatusCodes.BAD_REQUEST)
-   * @param details - Optional additional metadata or error details
+   * Creates a new AppException instance.
+   *
+   * @param props - Exception configuration object or direct message string
    */
-  constructor(
-    name: string = AppExceptionEnum.BAD_REQUEST,
-    message = 'Erro ao processar requisição',
-    status: HttpStatusCodes = HttpStatusCodes.BAD_REQUEST,
-    details?: unknown,
-  ) {
+  constructor(props?: AppExceptionProps | string) {
+    const isString = typeof props === 'string';
+    const message = isString ? props : (props?.message ?? 'Erro ao processar requisição');
+    const status = isString ? HttpStatusCodes.BAD_REQUEST : (props?.status ?? HttpStatusCodes.BAD_REQUEST);
+    const code = isString ? undefined : props?.code;
+    const details = isString ? undefined : props?.details;
+    const cause = isString ? undefined : props?.cause;
+
     super(message);
-    this.name = name;
+
+    this.name = this.constructor.name;
+    this.code = code;
     this.message = message;
     this.status = status;
     this.details = details;
+    this.cause = cause;
+    this.timestamp = new Date().toISOString();
 
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -62,14 +87,16 @@ export class AppException extends Error {
   }
 
   /**
-   * Serializes the exception into a plain JSON-compatible object.
+   * Serializes the exception into a plain JSON-compatible object suitable for API responses.
    */
-  public toJSON() {
+  public toJSON(): AppExceptionJSON {
     return {
       name: this.name,
       message: this.message,
       status: this.status,
-      details: this.details,
+      ...(this.code !== undefined && { code: this.code }),
+      ...(this.details !== undefined && { details: this.details }),
+      timestamp: this.timestamp,
     };
   }
 }
@@ -85,10 +112,9 @@ export function isAppException(error: unknown): error is AppException {
     error instanceof AppException ||
     Boolean(
       error &&
-      typeof error === 'object' &&
-      'status' in error &&
-      'name' in error &&
-      'message' in error,
+        typeof error === 'object' &&
+        'status' in error &&
+        'message' in error,
     )
   );
 }

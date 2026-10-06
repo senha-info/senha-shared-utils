@@ -60,7 +60,9 @@ export async function executePromise<T>(
     let message = 'Error while executing promise';
 
     if (error instanceof AppException) {
-      message = `(${error.status} - ${error.name}) ${error.message}`;
+      message = error.code
+        ? `(${error.status} - ${error.code}) ${error.message}`
+        : `(${error.status}) ${error.message}`;
     } else if (isAxiosErrorLike(error)) {
       message = error.message;
       if (error.response?.data) {
